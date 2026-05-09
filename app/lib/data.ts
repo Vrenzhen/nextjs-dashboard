@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from 'next/cache'; // Tambahan import noStore
 import postgres from 'postgres';
 import {
   CustomerField,
@@ -12,6 +13,7 @@ import { formatCurrency } from './utils';
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function fetchRevenue() {
+  noStore(); // Mencegah Vercel melakukan cache pada data grafik
   try {
     console.log('Fetching revenue data...');
     // Delay 3 detik untuk Chapter 9
@@ -29,8 +31,9 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noStore(); // Mencegah Vercel melakukan cache pada daftar invoice
   try {
-    // UBAH DI SINI: Menggunakan ORDER BY RANDOM() agar nama dan nominal tagihan selalu bervariasi
+    // Menggunakan ORDER BY RANDOM() agar nama dan nominal tagihan selalu bervariasi
     const data_2889 = await sql<LatestInvoiceRaw[]>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
@@ -50,6 +53,7 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
+  noStore(); // Mencegah Vercel melakukan cache pada data kartu
   try {
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
@@ -84,6 +88,7 @@ export async function fetchCardData() {
 
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(query: string, currentPage: number) {
+  noStore();
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   try {
     const invoices = await sql<InvoicesTable[]>`
@@ -114,6 +119,7 @@ export async function fetchFilteredInvoices(query: string, currentPage: number) 
 }
 
 export async function fetchInvoicesPages(query: string) {
+  noStore();
   try {
     const data = await sql`SELECT COUNT(*)
     FROM invoices
