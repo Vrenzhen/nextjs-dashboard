@@ -16,7 +16,7 @@ export async function fetchRevenue() {
   noStore(); // Mencegah Vercel melakukan cache pada data grafik
   try {
     console.log('Fetching revenue data...');
-    // Delay 3 detik untuk Chapter 9
+    // Delay 3 detik untuk Chapter 9 (muncul paling lambat)
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // Kembali ke query normal
@@ -33,6 +33,9 @@ export async function fetchRevenue() {
 export async function fetchLatestInvoices() {
   noStore(); // Mencegah Vercel melakukan cache pada daftar invoice
   try {
+    // TAMBAHAN DELAY 1.5 DETIK agar kotak loading terlihat
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     // Menggunakan ORDER BY RANDOM() agar nama dan nominal tagihan selalu bervariasi
     const data_2889 = await sql<LatestInvoiceRaw[]>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -55,6 +58,9 @@ export async function fetchLatestInvoices() {
 export async function fetchCardData() {
   noStore(); // Mencegah Vercel melakukan cache pada data kartu
   try {
+    // TAMBAHAN DELAY 1 DETIK agar kartu muncul berurutan
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     const invoiceStatusPromise = sql`SELECT
